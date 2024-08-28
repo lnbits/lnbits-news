@@ -37,6 +37,8 @@ export async function getOrSetCache(key, fetchData) {
     console.log('Cache exists and has not expired returning', key)
     return cachedData.value
   } else {
+    const formattedExpiry = new Date(cachedData && cachedData.expiry).toLocaleString()
+    console.log('formattedExpiry: ', formattedExpiry)
     // log why we are fetching new data
     if (cachedData) {
       console.log('Cache has expired for key:', key)
@@ -46,8 +48,10 @@ export async function getOrSetCache(key, fetchData) {
     console.log('Fetching new data for key:', key)
     const newData = await fetchData()
     const expiry = now + CACHE_TTL
+    console.log('expiry: ', expiry)
 
     await kv.set(key, { value: newData, expiry })
+    console.log('Set key:', key, 'with expiry:', expiry, 'formattedExpiry:', formattedExpiry)
 
     return newData
   }
@@ -92,7 +96,7 @@ export async function getArticlesByAuthor(authorNpubHex, relayUrl) {
 }
 
 export async function getCachedArticles(authorNpubHex, relayUrl) {
-  return await getOrSetCache('articles', async () => {
+  return await getOrSetCache('lnbits-news-articles', async () => {
     return await getArticlesByAuthor(authorNpubHex, relayUrl)
   })
 }
