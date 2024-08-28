@@ -142,7 +142,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
               </div>
             </footer>
           </dl>
-          <main className={'prose xl:col-span-3 xl:row-span-2 xl:pb-0'}>
+          <main className={'prose dark:prose-invert xl:col-span-3 xl:row-span-2 xl:pb-0'}>
             {image && <img src={image} alt={postTitle} className="mb-4 w-full" />}
             <ReactMarkdown>{post.content}</ReactMarkdown>
           </main>
