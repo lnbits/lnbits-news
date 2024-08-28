@@ -15,12 +15,48 @@ export default async function Home() {
   return (
     <>
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
-        <div className="space-y-2 pb-8 pt-6 md:space-y-5">
+        <div className="prose space-y-2 pb-8 pt-6 dark:prose-invert md:space-y-5">
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
             LNbits News
           </h1>
           <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
-            {siteMetadata.description}
+            News about LNbits releases, new features, upcoming events and product releases.
+          </p>
+          <p>
+            New posts are published as Nostr long form content and can be read in any&nbsp;
+            <a
+              href={
+                'https://highlighter.com/npub10efcj7x65z2ak6vd69xr8f2hvqwuaqrhlygl3yqa4y63hfvc02mqwzaeh3'
+              }
+              title={'LNbits News on Highlighter.com'}
+            >
+              long form
+            </a>
+            &nbsp;
+            <a
+              href={
+                'https://habla.news/p/npub10efcj7x65z2ak6vd69xr8f2hvqwuaqrhlygl3yqa4y63hfvc02mqwzaeh3'
+              }
+              title={'LNbits News on Habla.news'}
+            >
+              Nostr
+            </a>
+            &nbsp;
+            <a
+              href={
+                'https://yakihonne.com/users/nprofile1qyw8wumn8ghj7mn0wd68ytfsxyh8jcttd95x7mnwv5hxxmmdqyw8wumn8ghj7mn0wd68ytfsxgh8jcttd95x7mnwv5hxxmmdqy08wumn8ghj7mn0wd68ytfsxvhxgmmjv9nxzcm5dae8jtn0wfnsz9rhwden5te0wfjkccte9ejxzmt4wvhxjmcpremhxue69uhkummnw3ez6vpj9ejx7unpveskxar0wfujummjvuqzqljn39ud4gy4md5cm52vxwj4wcqae6q807g3lzgpm2f4rwjes74k92pvhf'
+              }
+              title={'LNbits News on Yakihonne.com'}
+            >
+              client
+            </a>
+            .
+          </p>
+          <p>
+            Find us on nostr:
+            <a href={'https://njump.me/lnbits@nostr.com'} title={'LNbits on Nostr'}>
+              lnbits@nostr.com
+            </a>
           </p>
         </div>
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
