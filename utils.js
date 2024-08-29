@@ -33,8 +33,7 @@ export async function getOrSetCache(key, fetchData) {
   const cachedData = await kv.get(key)
   const now = Date.now()
 
-  if (process.env.NOSTR_REDIS_CACHE_ENABLED && cachedData && cachedData.expiry > now) {
-    console.log('Cache exists and has not expired returning', key)
+  if (process.env.NOSTR_REDIS_CACHE_ENABLED === 'true' && cachedData && cachedData.expiry > now) {
     return cachedData.value
   } else {
     const formattedExpiry = new Date(cachedData && cachedData.expiry).toLocaleString()
