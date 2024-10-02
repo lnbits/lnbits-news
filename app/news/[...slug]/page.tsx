@@ -1,6 +1,6 @@
 import 'css/prism.css'
 import 'katex/dist/katex.css'
-
+import Head from 'next/head'
 import PageTitle from '@/components/PageTitle'
 import { components } from '@/components/MDXComponents'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
@@ -46,24 +46,28 @@ export async function generateMetadata({
     }
   })
 
+  const postTitle = post.tags.find((tag) => tag[0] === 'title')[1]
+  const ogImage = post.tags.find((tag) => tag[0] === 'image')[1]
+  const summary = post.tags.find((tag) => tag[0] === 'summary')[1]
+
   return {
-    title: post.title,
-    description: post.summary,
+    title: postTitle,
+    description: summary,
     openGraph: {
-      title: post.title,
-      description: post.summary,
+      title: postTitle ?? post.title,
+      description: summary ?? post.summary,
       siteName: siteMetadata.title,
       locale: 'en_GB',
       type: 'article',
       publishedTime: publishedAt,
       url: './',
-      images: ogImages,
+      images: ogImage ?? ogImages,
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
-      description: post.summary,
-      images: imageList,
+      title: postTitle ?? post.title,
+      description: summary ?? post.summary,
+      images: ogImage ?? ogImages,
     },
   }
 }
