@@ -15,6 +15,8 @@ import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import rehypeRaw from 'rehype-raw'
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 
 const defaultLayout = 'PostLayout'
 
@@ -70,6 +72,29 @@ export async function generateMetadata({
       images: ogImage ?? ogImages,
     },
   }
+}
+
+// Extend the default schema to allow iframe and video
+const customSchema = {
+  ...defaultSchema,
+  tagNames: [...(defaultSchema.tagNames || []), 'iframe', 'video', 'source'],
+  attributes: {
+    ...defaultSchema.attributes,
+    iframe: [
+      'src',
+      'width',
+      'height',
+      'allow',
+      'allowfullscreen',
+      'frameborder',
+      'loading',
+      'referrerpolicy',
+      'sandbox',
+      'title',
+    ],
+    video: ['src', 'width', 'height', 'controls', 'autoplay', 'loop', 'muted', 'poster', 'preload'],
+    source: ['src', 'type'],
+  },
 }
 
 export default async function Page({ params }: { params: { slug: string[] } }) {
@@ -148,7 +173,9 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
           </dl>
           <main className={'prose dark:prose-invert xl:col-span-3 xl:row-span-2 xl:pb-0'}>
             {image && <img src={image} alt={postTitle} className="mb-4 w-full" />}
-            <ReactMarkdown>{post.content}</ReactMarkdown>
+            <ReactMarkdown rehypePlugins={[rehypeRaw, [rehypeSanitize, customSchema]]}>
+              {post.content}
+            </ReactMarkdown>
           </main>
         </div>
       </div>
