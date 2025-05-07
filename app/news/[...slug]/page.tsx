@@ -48,9 +48,9 @@ export async function generateMetadata({
     }
   })
 
-  const postTitle = post.tags.find((tag) => tag[0] === 'title')[1]
-  const ogImage = post.tags.find((tag) => tag[0] === 'image')[1]
-  const summary = post.tags.find((tag) => tag[0] === 'summary')[1]
+  const postTitle = post.tags.find((tag) => tag[0] === 'title')?.[1] || ''
+  const ogImage = post.tags.find((tag) => tag[0] === 'image')?.[1] || ''
+  const summary = post.tags.find((tag) => tag[0] === 'summary')?.[1] || ''
 
   return {
     title: postTitle,
@@ -104,7 +104,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
     const slugifiedTitle = slugifyForUri(article.tags.find((tag) => tag[0] === 'title')[1])
     return slugifiedTitle === slug
   })
-  const postTitle = post.tags.find((tag) => tag[0] === 'title')[1]
+  const postTitle = post.tags.find((tag) => tag[0] === 'title')?.[1] || ''
   const author = await getCachedUserProfile(process.env.AUTHOR_PUBKEY, process.env.RELAY_URL)
   const image =
     post.tags.find((tag) => tag[0] === 'image') && post.tags.find((tag) => tag[0] === 'image')[1]
