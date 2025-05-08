@@ -59,7 +59,7 @@ export default async function Home() {
             </a>
           </p>
         </div>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {!posts.length && 'No posts found.'}
           {posts.slice(0, MAX_DISPLAY).map((post) => {
             const { summary } = post
@@ -70,47 +70,43 @@ export default async function Home() {
             const slug = slugifyForUri(title)
             const date = formatDate(unixTimestampToDate(post.created_at))
             return (
-              <li key={slug} className="py-12">
-                <article>
-                  <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
-                    <dl>
-                      <dt className="sr-only">Published on</dt>
-                      <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                        <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
-                      </dd>
-                    </dl>
-                    <div className="space-y-5 xl:col-span-3">
-                      <div className="space-y-6">
-                        <div>
-                          <h2 className="text-2xl font-bold leading-8 tracking-tight">
-                            <Link
-                              href={`/news/${slug}`}
-                              className="text-gray-900 dark:text-gray-100"
-                            >
-                              {title}
-                            </Link>
-                          </h2>
-                        </div>
-                        <div className="prose max-w-none text-gray-500 dark:text-gray-400">
-                          {summary}
-                        </div>
-                      </div>
-                      <div className="text-base font-medium leading-6">
-                        <Link
-                          href={`/news/${slug}`}
-                          className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                          aria-label={`Read more: "${title}"`}
-                        >
-                          Read more &rarr;
-                        </Link>
-                      </div>
-                    </div>
+              <article
+                key={slug}
+                className="flex flex-col overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700"
+              >
+                {image && (
+                  <div className="aspect-w-16 aspect-h-9">
+                    <img src={image} alt={title} className="h-full w-full object-cover" />
                   </div>
-                </article>
-              </li>
+                )}
+                <div className="flex flex-1 flex-col justify-between p-6">
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
+                    </p>
+                    <h2 className="mt-2 text-xl font-semibold leading-7 tracking-tight text-gray-900 dark:text-gray-100">
+                      <Link href={`/news/${slug}`} className="hover:text-primary-500">
+                        {title}
+                      </Link>
+                    </h2>
+                    <p className="mt-3 line-clamp-3 text-base leading-7 text-gray-500 dark:text-gray-400">
+                      {summary}
+                    </p>
+                  </div>
+                  <div className="mt-6">
+                    <Link
+                      href={`/news/${slug}`}
+                      className="text-base font-medium leading-6 text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                      aria-label={`Read more: "${title}"`}
+                    >
+                      Read more &rarr;
+                    </Link>
+                  </div>
+                </div>
+              </article>
             )
           })}
-        </ul>
+        </div>
       </div>
       {posts.length > MAX_DISPLAY && (
         <div className="flex justify-end text-base font-medium leading-6">
