@@ -8,10 +8,41 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const MAX_DISPLAY = 500
+const ITEMS_PER_PAGE = 9
 
-export default async function Home() {
+// Make the page dynamic
+export const dynamic = 'force-dynamic'
+
+interface MainProps {
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export default async function Main({ searchParams }: MainProps) {
   const posts = await getCachedArticles(process.env.AUTHOR_PUBKEY, process.env.RELAY_URL)
+  console.log('Total posts:', posts.length)
+  console.log('Search params:', searchParams)
+
+  const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE)
+  console.log('Total pages:', totalPages)
+
+  // Ensure page is between 1 and totalPages
+  const pageParam = searchParams?.page
+  let currentPage = 1
+  if (typeof pageParam === 'string') {
+    currentPage = Number(pageParam)
+  }
+  currentPage = Math.max(1, Math.min(currentPage, totalPages))
+  console.log('Current page:', currentPage)
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, posts.length)
+  console.log('Start index:', startIndex)
+  console.log('End index:', endIndex)
+
+  const currentPosts = posts.slice(startIndex, endIndex)
+  console.log('Current posts length:', currentPosts.length)
+  console.log('First post title:', currentPosts[0]?.tags.find((tag) => tag[0] === 'title')?.[1])
+
   return (
     <>
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -60,8 +91,8 @@ export default async function Home() {
           </p>
         </div>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {!posts.length && 'No posts found.'}
-          {posts.slice(0, MAX_DISPLAY).map((post) => {
+          {!currentPosts.length && 'No posts found.'}
+          {currentPosts.map((post) => {
             const { summary } = post
             const image =
               post.tags.find((tag) => tag[0] === 'image') &&
@@ -108,17 +139,26 @@ export default async function Home() {
           })}
         </div>
       </div>
-      {posts.length > MAX_DISPLAY && (
-        <div className="flex justify-end text-base font-medium leading-6">
-          <Link
-            href="/blog"
-            className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-            aria-label="All posts"
-          >
-            All Posts &rarr;
-          </Link>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center space-x-4 pb-8 pt-6">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Link
+              key={page}
+              href={`/?page=${page}`}
+              className={`rounded-md px-4 py-2 ${
+                page === currentPage
+                  ? 'bg-primary-500 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              }`}
+            >
+              {page}
+            </Link>
+          ))}
         </div>
       )}
+
       {siteMetadata.newsletter?.provider && (
         <div className="flex items-center justify-center pt-4">
           <NewsletterForm />

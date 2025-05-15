@@ -1,5 +1,9 @@
 import Main from './Main'
 
-export default async function Page() {
-  return <Main />
+interface PageProps {
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export default async function Page({ searchParams }: PageProps) {
+  return <Main searchParams={searchParams} />
 }
