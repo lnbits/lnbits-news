@@ -21,22 +21,16 @@ export default async function Main({ searchParams }: MainProps) {
   const posts = await getCachedArticles(process.env.AUTHOR_PUBKEY, process.env.RELAY_URL)
   // sort posts by title tag
   posts.sort((a, b) => {
-    const aArticleDate = a.tags.find((tag) => tag[0] === 'published_at')?.[1]
-    const bArticleDate = b.tags.find((tag) => tag[0] === 'published_at')?.[1]
+    let aArticleDate = a.tags.find((tag) => tag[0] === 'published_at')?.[1]
+    let bArticleDate = b.tags.find((tag) => tag[0] === 'published_at')?.[1]
+    // if no published_at tag, use created_at
+    aArticleDate = aArticleDate ? aArticleDate : a.created_at
+    bArticleDate = bArticleDate ? bArticleDate : b.created_at
 
     return parseInt(bArticleDate) - parseInt(aArticleDate)
   })
-  // log title of each posts
-  posts.forEach((post) => {
-    const title = post.tags.find((tag) => tag[0] === 'title')?.[1]
-    const date = post.tags.find((tag) => tag[0] === 'published_at')?.[1]
-    console.log('title: ', title, unixTimestampToDate(date))
-  })
-  console.log('Total posts:', posts.length)
-  console.log('Search params:', searchParams)
 
   const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE)
-  console.log('Total pages:', totalPages)
 
   // Ensure page is between 1 and totalPages
   const pageParam = searchParams?.page
@@ -45,16 +39,11 @@ export default async function Main({ searchParams }: MainProps) {
     currentPage = Number(pageParam)
   }
   currentPage = Math.max(1, Math.min(currentPage, totalPages))
-  console.log('Current page:', currentPage)
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, posts.length)
-  console.log('Start index:', startIndex)
-  console.log('End index:', endIndex)
 
   const currentPosts = posts.slice(startIndex, endIndex)
-  console.log('Current posts length:', currentPosts.length)
-  console.log('First post title:', currentPosts[0]?.tags.find((tag) => tag[0] === 'title')?.[1])
 
   return (
     <>
@@ -112,7 +101,11 @@ export default async function Main({ searchParams }: MainProps) {
               post.tags.find((tag) => tag[0] === 'image')[1]
             const title = post.tags.find((tag) => tag[0] === 'title')[1]
             const slug = slugifyForUri(title)
-            const date = formatDate(unixTimestampToDate(post.created_at))
+            // get date from published_at tag and fallback to created_at
+            const publishedAt = post.tags.find((tag) => tag[0] === 'published_at')?.[1]
+            const date = publishedAt
+              ? unixTimestampToDate(publishedAt)
+              : unixTimestampToDate(post.created_at)
             return (
               <article
                 key={slug}
