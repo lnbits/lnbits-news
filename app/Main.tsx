@@ -19,6 +19,19 @@ interface MainProps {
 
 export default async function Main({ searchParams }: MainProps) {
   const posts = await getCachedArticles(process.env.AUTHOR_PUBKEY, process.env.RELAY_URL)
+  // sort posts by title tag
+  posts.sort((a, b) => {
+    const aArticleDate = a.tags.find((tag) => tag[0] === 'published_at')?.[1]
+    const bArticleDate = b.tags.find((tag) => tag[0] === 'published_at')?.[1]
+
+    return parseInt(bArticleDate) - parseInt(aArticleDate)
+  })
+  // log title of each posts
+  posts.forEach((post) => {
+    const title = post.tags.find((tag) => tag[0] === 'title')?.[1]
+    const date = post.tags.find((tag) => tag[0] === 'published_at')?.[1]
+    console.log('title: ', title, unixTimestampToDate(date))
+  })
   console.log('Total posts:', posts.length)
   console.log('Search params:', searchParams)
 
