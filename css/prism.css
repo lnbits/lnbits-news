@@ -142,3 +142,12 @@
 .token.table {
   display: inline;
 }
+
+/* Table scrolling styles */
+.prose table {
+  @apply w-full;
+}
+
+.prose table {
+  @apply block w-full overflow-x-auto;
+}

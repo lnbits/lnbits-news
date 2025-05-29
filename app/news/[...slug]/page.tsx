@@ -11,6 +11,8 @@ import {
   unixTimestampToDate,
 } from '../../../utils'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+
 import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
 import { notFound } from 'next/navigation'
@@ -173,7 +175,10 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
           </dl>
           <main className={'prose dark:prose-invert xl:col-span-3 xl:row-span-2 xl:pb-0'}>
             {image && <img src={image} alt={postTitle} className="mb-4 w-full" />}
-            <ReactMarkdown rehypePlugins={[rehypeRaw, [rehypeSanitize, customSchema]]}>
+            <ReactMarkdown
+              rehypePlugins={[rehypeRaw, [rehypeSanitize, customSchema]]}
+              remarkPlugins={[remarkGfm]}
+            >
               {post.content}
             </ReactMarkdown>
           </main>
