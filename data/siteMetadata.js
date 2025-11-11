@@ -14,7 +14,7 @@ const siteMetadata = {
   njump: 'https://njump.me/npub10efcj7x65z2ak6vd69xr8f2hvqwuaqrhlygl3yqa4y63hfvc02mqwzaeh3',
   github: 'https://github.com/lnbits',
   x: 'https://x.com/lnbits',
-  youtube: 'https://www.youtube.com/@lnbits9178',
+  youtube: 'https://www.youtube.com/@lnbits',
   // instagram: 'https://www.instagram.com',
   locale: 'en-US',
   // set to true if you want a navbar fixed to the top
