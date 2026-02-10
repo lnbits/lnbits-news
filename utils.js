@@ -62,8 +62,20 @@ export async function getArticlesByAuthor(authorNpubHex, relayUrl) {
     const relay = await Relay.connect(relayUrl)
 
     return new Promise((resolve, reject) => {
-      const events = []
-      const sub = relay.subscribe(
+      const articles = []
+      const deletionRequests = []
+      let articlesComplete = false
+      let deletionsComplete = false
+
+      function tryResolve() {
+        if (articlesComplete && deletionsComplete) {
+          relay.close()
+          resolve(filterDeletedArticles(articles, deletionRequests, authorNpubHex))
+        }
+      }
+
+      // Subscribe to articles (kind 30023)
+      const articleSub = relay.subscribe(
         [
           {
             kinds: [30023],
@@ -72,27 +84,89 @@ export async function getArticlesByAuthor(authorNpubHex, relayUrl) {
         ],
         {
           onevent(event) {
-            events.push(event)
+            articles.push(event)
           },
           oneose() {
-            sub.close()
-            relay.close()
-            resolve(events)
+            articleSub.close()
+            articlesComplete = true
+            tryResolve()
+          },
+        }
+      )
+
+      // Subscribe to deletion requests (kind 5, NIP-09)
+      const deletionSub = relay.subscribe(
+        [
+          {
+            kinds: [5],
+            authors: [authorNpubHex],
+          },
+        ],
+        {
+          onevent(event) {
+            deletionRequests.push(event)
+          },
+          oneose() {
+            deletionSub.close()
+            deletionsComplete = true
+            tryResolve()
           },
         }
       )
 
       // Timeout after 30 seconds
       setTimeout(() => {
-        sub.close()
+        articleSub.close()
+        deletionSub.close()
         relay.close()
-        resolve(events) // Resolve with whatever events have been collected so far
+        resolve(filterDeletedArticles(articles, deletionRequests, authorNpubHex))
       }, 30000)
     })
   } catch (error) {
     console.error('Error connecting to relay:', error)
     return []
   }
+}
+
+/**
+ * Filters out articles that have been marked for deletion via NIP-09 deletion requests.
+ * Matches by event ID (e tags) and replaceable event address (a tags).
+ * Only honors deletion requests from the same pubkey as the article author.
+ */
+function filterDeletedArticles(articles, deletionRequests, authorPubkey) {
+  if (!deletionRequests.length) return articles
+
+  // Collect event IDs and addressable identifiers targeted for deletion
+  const deletedEventIds = new Set()
+  const deletedAddresses = new Set()
+
+  for (const del of deletionRequests) {
+    // Only honor deletion requests from the same author
+    if (del.pubkey !== authorPubkey) continue
+
+    for (const tag of del.tags) {
+      if (tag[0] === 'e') {
+        deletedEventIds.add(tag[1])
+      } else if (tag[0] === 'a') {
+        deletedAddresses.add(tag[1])
+      }
+    }
+  }
+
+  return articles.filter((article) => {
+    // Check if event ID is targeted for deletion
+    if (deletedEventIds.has(article.id)) return false
+
+    // Check if replaceable event address is targeted for deletion
+    // Address format: <kind>:<pubkey>:<d-identifier>
+    const dTag = article.tags.find((tag) => tag[0] === 'd')
+    if (dTag) {
+      const address = `${article.kind}:${article.pubkey}:${dTag[1]}`
+      if (deletedAddresses.has(address)) return false
+    }
+
+    return true
+  })
 }
 
 export async function getCachedArticles(authorNpubHex, relayUrl) {

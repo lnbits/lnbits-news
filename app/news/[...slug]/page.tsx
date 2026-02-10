@@ -19,6 +19,26 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
+import rehypeFormat from 'rehype-format'
+import type { Root, Element, RootContent } from 'hast'
+
+// Custom rehype plugin to convert <br> to <br />
+const rehypeSelfClosingBr = () => {
+  return (tree: Root) => {
+    const visit = (node: Root | RootContent) => {
+      if (node.type === 'element') {
+        if (node.tagName === 'br') {
+          node.properties = node.properties || {}
+          node.children = []
+        }
+        node.children.forEach(visit)
+      } else if ('children' in node) {
+        ;(node as Root).children.forEach(visit)
+      }
+    }
+    visit(tree)
+  }
+}
 
 const defaultLayout = 'PostLayout'
 
@@ -106,6 +126,7 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
     const slugifiedTitle = slugifyForUri(article.tags.find((tag) => tag[0] === 'title')[1])
     return slugifiedTitle === slug
   })
+  console.log('Fetched post:', post.content)
   const postTitle = post.tags.find((tag) => tag[0] === 'title')?.[1] || ''
   const author = await getCachedUserProfile(process.env.AUTHOR_PUBKEY, process.env.RELAY_URL)
   const image =
@@ -176,7 +197,12 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
           <main className={'prose dark:prose-invert xl:col-span-3 xl:row-span-2 xl:pb-0'}>
             {image && <img src={image} alt={postTitle} className="mb-4 w-full" />}
             <ReactMarkdown
-              rehypePlugins={[rehypeRaw, [rehypeSanitize, customSchema]]}
+              rehypePlugins={[
+                rehypeRaw,
+                [rehypeSanitize, customSchema],
+                rehypeSelfClosingBr,
+                [rehypeFormat, { indent: 2 }],
+              ]}
               remarkPlugins={[remarkGfm]}
             >
               {post.content}
