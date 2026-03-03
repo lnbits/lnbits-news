@@ -25,10 +25,10 @@ data/posts/lnbits-v1-1-0.md  →  https://news.lnbits.com/news/lnbits-v1-1-0
 
 ```markdown
 ---
-title: 'LNbits v1.1.0 Released' # required
-date: '2024-06-01T12:00:00.000Z' # required — ISO 8601, used for sorting
-summary: 'What changed in this release' # optional — shown on the listing card
-image: 'https://...' # optional — banner image
+title: "LNbits v1.1.0 Released" # required
+date: "2024-06-01T12:00:00.000Z" # required — ISO 8601, used for sorting
+summary: "What changed in this release" # optional — shown on the listing card
+image: "https://..." # optional — banner image
 draft: false # set to true to hide from the site
 ---
 
