@@ -1,38 +1,22 @@
 import Link from '@/components/Link'
-import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { formatDate } from 'pliny/utils/formatDate'
 import NewsletterForm from 'pliny/ui/NewsletterForm'
-import { getCachedArticles, slugifyForUri, unixTimestampToDate } from '../utils'
-import dotenv from 'dotenv'
-
-dotenv.config()
+import { allPosts } from 'contentlayer/generated'
 
 const ITEMS_PER_PAGE = 9
-
-// Make the page dynamic
-export const dynamic = 'force-dynamic'
 
 interface MainProps {
   searchParams: { [key: string]: string | string[] | undefined }
 }
 
-export default async function Main({ searchParams }: MainProps) {
-  const posts = await getCachedArticles(process.env.AUTHOR_PUBKEY, process.env.RELAY_URL)
-  // sort posts by title tag
-  posts.sort((a, b) => {
-    let aArticleDate = a.tags.find((tag) => tag[0] === 'published_at')?.[1]
-    let bArticleDate = b.tags.find((tag) => tag[0] === 'published_at')?.[1]
-    // if no published_at tag, use created_at
-    aArticleDate = aArticleDate ? aArticleDate : a.created_at
-    bArticleDate = bArticleDate ? bArticleDate : b.created_at
-
-    return parseInt(bArticleDate) - parseInt(aArticleDate)
-  })
+export default function Main({ searchParams }: MainProps) {
+  const posts = allPosts
+    .filter((post) => !post.draft)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE)
 
-  // Ensure page is between 1 and totalPages
   const pageParam = searchParams?.page
   let currentPage = 1
   if (typeof pageParam === 'string') {
@@ -41,9 +25,7 @@ export default async function Main({ searchParams }: MainProps) {
   currentPage = Math.max(1, Math.min(currentPage, totalPages))
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, posts.length)
-
-  const currentPosts = posts.slice(startIndex, endIndex)
+  const currentPosts = posts.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
   return (
     <>
@@ -55,57 +37,11 @@ export default async function Main({ searchParams }: MainProps) {
           <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
             News about LNbits releases, new features, upcoming events and product releases.
           </p>
-          <p>
-            New posts are published as Nostr long form content and can be read in any&nbsp;
-            <a
-              href={
-                'https://highlighter.com/npub10efcj7x65z2ak6vd69xr8f2hvqwuaqrhlygl3yqa4y63hfvc02mqwzaeh3'
-              }
-              title={'LNbits News on Highlighter.com'}
-            >
-              long form
-            </a>
-            &nbsp;
-            <a
-              href={
-                'https://habla.news/p/npub10efcj7x65z2ak6vd69xr8f2hvqwuaqrhlygl3yqa4y63hfvc02mqwzaeh3'
-              }
-              title={'LNbits News on Habla.news'}
-            >
-              Nostr
-            </a>
-            &nbsp;
-            <a
-              href={
-                'https://yakihonne.com/users/nprofile1qyw8wumn8ghj7mn0wd68ytfsxyh8jcttd95x7mnwv5hxxmmdqyw8wumn8ghj7mn0wd68ytfsxgh8jcttd95x7mnwv5hxxmmdqy08wumn8ghj7mn0wd68ytfsxvhxgmmjv9nxzcm5dae8jtn0wfnsz9rhwden5te0wfjkccte9ejxzmt4wvhxjmcpremhxue69uhkummnw3ez6vpj9ejx7unpveskxar0wfujummjvuqzqljn39ud4gy4md5cm52vxwj4wcqae6q807g3lzgpm2f4rwjes74k92pvhf'
-              }
-              title={'LNbits News on Yakihonne.com'}
-            >
-              client
-            </a>
-            .
-          </p>
-          <p>
-            Find us on nostr:
-            <a href={'https://njump.me/lnbits@nostr.com'} title={'LNbits on Nostr'}>
-              lnbits@nostr.com
-            </a>
-          </p>
         </div>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {!currentPosts.length && 'No posts found.'}
           {currentPosts.map((post) => {
-            const { summary } = post
-            const image =
-              post.tags.find((tag) => tag[0] === 'image') &&
-              post.tags.find((tag) => tag[0] === 'image')[1]
-            const title = post.tags.find((tag) => tag[0] === 'title')[1]
-            const slug = slugifyForUri(title)
-            // get date from published_at tag and fallback to created_at
-            const publishedAt = post.tags.find((tag) => tag[0] === 'published_at')?.[1]
-            const date = publishedAt
-              ? unixTimestampToDate(publishedAt)
-              : unixTimestampToDate(post.created_at)
+            const { title, slug, date, summary, image } = post
             return (
               <article
                 key={slug}
@@ -126,9 +62,11 @@ export default async function Main({ searchParams }: MainProps) {
                         {title}
                       </Link>
                     </h2>
-                    <p className="mt-3 line-clamp-3 text-base leading-7 text-gray-500 dark:text-gray-400">
-                      {summary}
-                    </p>
+                    {summary && (
+                      <p className="mt-3 line-clamp-3 text-base leading-7 text-gray-500 dark:text-gray-400">
+                        {summary}
+                      </p>
+                    )}
                   </div>
                   <div className="mt-6">
                     <Link
@@ -146,7 +84,6 @@ export default async function Main({ searchParams }: MainProps) {
         </div>
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center space-x-4 pb-8 pt-6">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (

@@ -143,9 +143,29 @@ export const Authors = defineDocumentType(() => ({
   computedFields,
 }))
 
+export const Post = defineDocumentType(() => ({
+  name: 'Post',
+  filePathPattern: 'posts/**/*.md',
+  contentType: 'markdown',
+  fields: {
+    title: { type: 'string', required: true },
+    date: { type: 'date', required: true },
+    summary: { type: 'string' },
+    image: { type: 'string' },
+    draft: { type: 'boolean', default: false },
+  },
+  computedFields: {
+    slug: {
+      type: 'string',
+      resolve: (doc) => doc._raw.flattenedPath.replace(/^posts\//, ''),
+    },
+    readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
+  },
+}))
+
 export default makeSource({
   contentDirPath: 'data',
-  documentTypes: [Blog, Authors],
+  documentTypes: [Blog, Authors, Post],
   mdx: {
     cwd: process.cwd(),
     remarkPlugins: [
@@ -175,8 +195,12 @@ export default makeSource({
     ],
   },
   onSuccess: async (importData) => {
-    const { allBlogs } = await importData()
-    createTagCount(allBlogs)
-    createSearchIndex(allBlogs)
+    try {
+      const { allBlogs } = await importData()
+      createTagCount(allBlogs)
+      createSearchIndex(allBlogs)
+    } catch {
+      // importData may fail on some Node.js versions; non-fatal for the news site
+    }
   },
 })
