@@ -1,5 +1,5 @@
 ---
-title: 'Spark, Arkade and phoenixd: simpler Lightning payments for LNbits'
+title: 'Comparing Spark, Arkade and Phoenixd'
 date: '2026-05-08T08:00:00.000Z'
 summary: 'A practical comparison of Spark, Arkade and phoenixd as funding sources for LNbits, looking at self-custody, unilateral exit, fees, privacy and operational trade-offs.'
 image: '/static/images/articles/spark-ark-phoenixd-comparison.png'
