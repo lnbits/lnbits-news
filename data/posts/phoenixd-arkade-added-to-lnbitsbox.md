@@ -14,12 +14,6 @@ This gives users more flexibility when deciding how their self-hosted LNbitsBox 
 
 ## More ways to fund LNbitsBox
 
-![Spark logo](/static/images/articles/lnbitsbox-ark-phoenix/spark.png)
-
-### Spark
-
-Spark remains available as a funding source for LNbitsBox. It offers a straightforward way to get started with self-custodial Lightning payments, without needing to run a traditional Lightning node from scratch.
-
 ![Phoenixd logo](/static/images/articles/lnbitsbox-ark-phoenix/phoenix.png)
 
 ### Phoenixd
@@ -35,6 +29,12 @@ Users can now choose Phoenixd during setup and run LNbits with Phoenixd as the f
 Arkade support adds an Ark-based funding source option to LNbitsBox.
 
 Ark is another approach to Bitcoin scaling and payments, and Arkade gives LNbitsBox users a way to use Ark on their own hardware while still using the familiar LNbits interface, extensions, wallets, and APIs.
+
+![Spark logo](/static/images/articles/lnbitsbox-ark-phoenix/spark.png)
+
+### Spark
+
+Spark remains available as a funding source for LNbitsBox. It offers a straightforward way to get started with self-custodial Lightning payments, without needing to run a traditional Lightning node from scratch.
 
 ## Choose the setup that suits you
 
