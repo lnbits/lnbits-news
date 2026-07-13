@@ -1,6 +1,6 @@
 ---
 title: 'Contribute to LNbits'
-date: '2026-06-25T12:00:00.000Z'
+date: '2026-03-25T12:00:00.000Z'
 image: '/static/images/articles/callingallcontributors.jpg'
 summary: 'LNbits grows through developers, testers, writers, designers, entrepreneurs and ambassadors who help improve, explain and expand the project.'
 draft: false
