@@ -1,6 +1,6 @@
 ---
 title: 'Phoenixd now available on My LNbits'
-date: '2026-07-07T10:51:21.000Z'
+date: '2026-07-17T10:51:21.000Z'
 image: '/static/images/articles/mylnbitscom-phoenixd.jpg'
 summary: 'Phoenixd is a fully self-custodial Lightning wallet. Now available on My LNbits.'
 draft: false
