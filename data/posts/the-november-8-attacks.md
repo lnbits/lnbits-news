@@ -1,5 +1,5 @@
 ---
-title: 'The November 8 Attacks: LNbits Security in the Age of AI'
+title: 'The LNbits Hack'
 date: '2026-11-16T12:00:00.000Z'
 summary: 'The LNbits team reports on the November 8 attacks, the evidence behind its assessment of AI involvement, and the changes underway to protect operators and their funds.'
 draft: false
@@ -13,7 +13,7 @@ We want to explain what happened, how we responded, what we observed during the 
 
 Beyond LNbits, we believe these events demonstrate something important about the changing security landscape for Bitcoin and free and open-source software.
 
-## The Attacks of November 8
+## How the attacks came to light
 
 On Sunday morning, we began receiving concerning reports from LNbits operators. As the reports accumulated, it became apparent that multiple independent installations were being attacked simultaneously.
 
