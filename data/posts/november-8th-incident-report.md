@@ -1,13 +1,14 @@
 ---
-title: 'The LNbits Hack'
+title: 'November 8th Incident Report'
 date: '2026-11-16T12:00:00.000Z'
 summary: 'The LNbits team reports on the November 8 attacks, the evidence behind its assessment of AI involvement, and the changes underway to protect operators and their funds.'
+image: '/static/images/articles/the-lnbits-hack.png'
 draft: false
 ---
 
-On Sunday, 8 November 2026, LNbits instances around the world were targeted by a coordinated wave of cyberattacks. Our own infrastructure was among the affected systems, as were installations operated by members of the LNbits community. Funds were stolen, services were disrupted, and operators were forced to take their instances offline.
+On Sunday, 8 November 2026, LNbits instances were targeted by a coordinated wave of cyberattacks. Our own infrastructure was among the affected systems, as were installations operated by members of the LNbits community. Funds were stolen, services were disrupted, and operators were forced to take their instances offline.
 
-It has been one of the most difficult weeks in the history of the LNbits project.
+It was the most difficult week in the history of the LNbits project.
 
 We want to explain what happened, how we responded, what we observed during the attacks, and how this experience is shaping the future of LNbits security.
 
@@ -37,7 +38,7 @@ In the most serious cases, attackers were able to move beyond LNbits and comprom
 
 Analysis of the available logs revealed a variety of subsequent activities. Some attackers attempted to interact with internal services, including the Caddy web server administration API. Others probed for credentials or attempted to gain additional access.
 
-On some installations, malicious Python extensions were deployed, apparently constructed specifically for the targeted environment.
+On some installations, malicious Python extensions were deployed, apparently constructed on-the-fly specifically for the targeted environment.
 
 Although the initial vulnerabilities were similar, the subsequent attacks varied considerably between instances.
 
@@ -143,11 +144,9 @@ The same tools that enable attackers to identify vulnerabilities can also help d
 
 Open-source projects can adapt through stronger isolation, safer defaults, automated security analysis and architectures designed to contain failures.
 
-The answer is not less transparency. It is better security engineering.
+## The Future
 
-## Moving Forward
-
-The November 8 attacks have been a difficult experience for LNbits and its community.
+The attacks on November 8 have been a difficult experience for LNbits and its community.
 
 We are deeply sorry to everyone who lost funds, experienced service disruption or was otherwise affected.
 
